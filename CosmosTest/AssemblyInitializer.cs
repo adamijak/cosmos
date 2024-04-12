@@ -6,7 +6,6 @@ namespace Adamijak.CosmosTest;
 [TestClass]
 public class AssemblyInitializer
 {
-    // private static CosmosDbContainer? container;
     public static IConfiguration? Configuration;
     public static CosmosClient? CosmosClient;
     public static Database? Database;
@@ -14,14 +13,10 @@ public class AssemblyInitializer
     public static async Task AssemblyInitialize(TestContext testContext)
     {
         Configuration = new ConfigurationBuilder()
+            .AddEnvironmentVariables()
             .AddIniFile("settings.ini")
             .Build();
-        // container = new CosmosDbBuilder()
-        //     .WithImage("mcr.microsoft.com/cosmosdb/linux/azure-cosmos-emulator:latest")
-        //     .Build();
-        // await container.StartAsync();
-        // var connectionString = container.GetConnectionString();
-        CosmosClient = new(Configuration["cosmos_connection_string"], new CosmosClientOptions()
+        CosmosClient = new(Configuration.GetValue<string>("COSMOS_CONNECTION_STRING"), new CosmosClientOptions()
         {
             SerializerOptions = new CosmosSerializationOptions
             {
@@ -39,10 +34,5 @@ public class AssemblyInitializer
             await Database.DeleteAsync();
         }
         CosmosClient?.Dispose();
-
-        // if (container is not null)
-        // {
-        //     await container.DisposeAsync();
-        // }
     }
 }
