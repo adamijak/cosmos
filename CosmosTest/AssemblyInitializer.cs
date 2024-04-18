@@ -1,12 +1,10 @@
 using Microsoft.Azure.Cosmos;
-using Microsoft.Extensions.Configuration;
 
 namespace Adamijak.CosmosTest;
 
 [TestClass]
 public class AssemblyInitializer
 {
-    public static IConfiguration? Configuration;
     public static CosmosClient? CosmosClient;
     public static Database? Database;
     [AssemblyInitialize]
