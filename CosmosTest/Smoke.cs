@@ -3,12 +3,12 @@ namespace Adamijak.CosmosTest;
 [TestClass]
 public class Smoke
 {
+    [ClassInitialize]
+    public static async Task ClassInitialize(TestContext context){}
+    
     [TestMethod]
     public void Pass(){}
-
-    [TestMethod]
-    public void Throw()
-    {
-        Assert.ThrowsException<Exception>(() => throw new Exception());
-    }
+    
+    [ClassCleanup]
+    public static async Task ClassCleanup(){}
 }
