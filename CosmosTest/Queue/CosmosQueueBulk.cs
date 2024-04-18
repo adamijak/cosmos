@@ -1,6 +1,7 @@
 using System.Net;
 using Adamijak.Cosmos.Extensions;
 using Adamijak.Cosmos.Queue;
+using Adamijak.CosmosTest.Common;
 using Microsoft.Azure.Cosmos;
 
 namespace Adamijak.CosmosTest.Queue;
@@ -10,27 +11,26 @@ public class CosmosQueueBulk
 {
     
     private static Container container = null!;
-    private static CosmosQueue<QueueItem> queue = null!;
+    private static CosmosQueue<QueueItemPk> queue = null!;
     private const int Count = 1_000;
-    
-    private static QueueItem SimpleQueueItem => new()
-    {
-        Id = Guid.NewGuid().ToString(),
-    };
     
     [ClassInitialize]
     public static async Task ClassInitialize(TestContext context)
     {
         var containerId = Guid.NewGuid().ToString();
         container = await AssemblyInitializer.Database.CreateContainerIfNotExistsAsync(containerId, "/id");
-        queue = new CosmosQueueBuilder<QueueItem>(container).Build();
+        queue = new CosmosQueueBuilder<QueueItemPk>(container).Build();
     }
     
     [TestMethod]
     public async Task BulkEnqueue()
     {
         var items = Enumerable.Range(0, Count)
-            .Select(i => SimpleQueueItem)
+            .Select(i => new QueueItemPk
+            {
+                Id = Guid.NewGuid().ToString(),
+                Pk = nameof(BulkEnqueue),
+            })
             .ToList();
         await items.ForEachAsync(queue.EnqueueAsync, 100);
         Assert.AreEqual(Count, await queue.CountAsync());
@@ -40,17 +40,22 @@ public class CosmosQueueBulk
     public async Task BulkProcess()
     {
         var items = Enumerable.Range(0, Count)
-            .Select(i => SimpleQueueItem)
+            .Select(i => new QueueItemPk
+            {
+                Id = Guid.NewGuid().ToString(),
+                Pk = nameof(BulkProcess),
+            })
             .ToList();
         
         await items.ForEachAsync(queue.EnqueueAsync, 100);
 
         var counter = 0;
-        await queue.ToAsyncEnumerable().ForEachAsync((i) =>
-        {
-            Interlocked.Increment(ref counter);
-            return Task.CompletedTask;
-        }, 100);
+        await queue.ToAsyncEnumerable(q => q.Where(i => i.Pk == nameof(BulkProcess)))
+            .ForEachAsync((i) => 
+            {
+                Interlocked.Increment(ref counter);
+                return Task.CompletedTask;
+            }, 100);
        
         Assert.AreEqual(Count, counter);
     }
