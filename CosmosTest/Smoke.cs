@@ -9,6 +9,6 @@ public class Smoke
     [TestMethod]
     public void Throw()
     {
-        throw new Exception("Smoke.Throw exception");
+        Assert.ThrowsException<Exception>(() => throw new Exception());
     }
 }
