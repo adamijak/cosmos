@@ -1,4 +1,5 @@
 using Microsoft.Azure.Cosmos;
+[assembly: Parallelize(Workers = 4, Scope = ExecutionScope.ClassLevel)]
 
 namespace Adamijak.CosmosTest;
 
