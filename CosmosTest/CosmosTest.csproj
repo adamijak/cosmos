@@ -26,10 +26,4 @@
       <ProjectReference Include="..\Cosmos\Cosmos.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <None Update="settings.ini">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-    </ItemGroup>
-
 </Project>
