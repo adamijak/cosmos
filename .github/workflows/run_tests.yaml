@@ -1,10 +1,16 @@
-name: Run tests
+name: Tests
 
 on:
   push:
     branches: [ "main" ]
+    paths:
+     - Cosmos/**
+     - CosmosTest/**
   pull_request:
     branches: [ "main" ]
+    paths:
+     - Cosmos/**
+     - CosmosTest/**
 
 jobs:
   Test:
