@@ -5,8 +5,8 @@ namespace Adamijak.CosmosTest;
 [TestClass]
 public class AssemblyInitializer
 {
-    public static CosmosClient? CosmosClient;
-    public static Database? Database;
+    public static CosmosClient CosmosClient = null!;
+    public static Database Database = null!;
     [AssemblyInitialize]
     public static async Task AssemblyInitialize(TestContext testContext)
     {
@@ -17,16 +17,13 @@ public class AssemblyInitializer
                 PropertyNamingPolicy = CosmosPropertyNamingPolicy.CamelCase
             }
         });
-        Database = await CosmosClient.CreateDatabaseIfNotExistsAsync("test-database");
+        Database = await CosmosClient.CreateDatabaseIfNotExistsAsync(Default.DatabaseId);
     }
 
     [AssemblyCleanup]
     public static async Task AssemblyCleanupAsync()
     {
-        if (Database is not null)
-        {
-            await Database.DeleteAsync();
-        }
-        CosmosClient?.Dispose();
+        await Database.DeleteAsync();
+        CosmosClient.Dispose();
     }
 }
