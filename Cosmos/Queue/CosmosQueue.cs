@@ -16,6 +16,9 @@ public class CosmosQueue<T>(Container container, CosmosQueueOptions<T> options) 
     public Task<ItemResponse<T>> EnqueueAsync(T item) =>
         container.CreateItemAsync(item, options.PartitionKeySelector(item));
     
+    public Task<ItemResponse<T>> ReadAsync(T item) =>
+        container.ReadItemAsync<T>(item.Id, options.PartitionKeySelector(item));
+    
     public Task<ItemResponse<T>> DeleteAsync(T item) =>
         container.DeleteItemAsync<T>(item.Id, options.PartitionKeySelector(item));
 

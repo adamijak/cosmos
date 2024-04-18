@@ -1,3 +1,4 @@
+using System.Net;
 using Adamijak.Cosmos.Queue;
 using Microsoft.Azure.Cosmos;
 
@@ -31,6 +32,28 @@ public class CosmosQueue
         
         Assert.AreEqual(item.Id, result.Id);
         Assert.AreNotEqual(default, result.Id);
+    }
+    
+    [TestMethod]
+    public async Task Read()
+    {
+        var item = SimpleQueueItem;
+        await queue.EnqueueAsync(item);
+        
+        QueueItem result = await queue.ReadAsync(item);
+        Assert.AreEqual(item.Id, result.Id);
+    }
+    
+    [TestMethod]
+    public async Task Delete()
+    {
+        var item = SimpleQueueItem;
+        QueueItem enqueued = await queue.EnqueueAsync(item);
+        Assert.AreEqual(item.Id, enqueued.Id);
+        
+        await queue.DeleteAsync(item);
+        var cosmosException = await Assert.ThrowsExceptionAsync<CosmosException>(() => queue.ReadAsync(item));
+        Assert.AreEqual(HttpStatusCode.NotFound, cosmosException.StatusCode);
     }
 
     [TestMethod]
