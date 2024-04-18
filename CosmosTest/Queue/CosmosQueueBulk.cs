@@ -52,7 +52,7 @@ public class CosmosQueueBulk
             return Task.CompletedTask;
         }, 100);
        
-        Assert.AreEqual(Count, await queue.CountAsync());
+        Assert.AreEqual(Count, counter);
     }
     
     [ClassCleanup]
