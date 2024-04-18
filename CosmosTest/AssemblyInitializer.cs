@@ -12,11 +12,7 @@ public class AssemblyInitializer
     [AssemblyInitialize]
     public static async Task AssemblyInitialize(TestContext testContext)
     {
-        Configuration = new ConfigurationBuilder()
-            .AddEnvironmentVariables()
-            .AddIniFile("settings.ini")
-            .Build();
-        CosmosClient = new(Configuration.GetValue<string>("COSMOS_CONNECTION_STRING"), new CosmosClientOptions()
+        CosmosClient = new(Environment.GetEnvironmentVariable("COSMOS_CS"), new CosmosClientOptions()
         {
             SerializerOptions = new CosmosSerializationOptions
             {
