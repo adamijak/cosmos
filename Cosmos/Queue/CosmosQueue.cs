@@ -4,47 +4,37 @@ using Microsoft.Azure.Cosmos.Linq;
 
 namespace Adamijak.Cosmos.Queue;
 
-public class CosmosQueue<T>(CosmosQueueOptions<T> options) where T : QueueItem
+public class CosmosQueue<T>(Container container, CosmosQueueOptions<T> options) where T : IQueueItem
 {
-    private readonly Container container = options.Container;
+    public async Task<int> CountAsync() => 
+        await container.GetItemLinqQueryable<object>().CountAsync();
 
-    public async Task<bool> IsSaturatedAsync() => options.SaturationThreshold <= await container.GetItemLinqQueryable<object>().CountAsync();
+    public async Task<bool> IsSaturatedAsync() => 
+        options.SaturationThreshold != -1
+        && options.SaturationThreshold < await CountAsync();
+    
+    public Task<ItemResponse<T>> EnqueueAsync(T item) =>
+        container.CreateItemAsync(item, options.PartitionKeySelector(item));
+    
+    public Task<ItemResponse<T>> DeleteAsync(T item) =>
+        container.DeleteItemAsync<T>(item.Id, options.PartitionKeySelector(item));
 
-    public const int DefaultChunkSize = 1_000;
-
-    public async Task EnqueueItemsAsync(T[] items)
+    public async Task<TransactionalBatchOperationResult<T>> DequeueAsync(T item)
     {
-        if (items.Length == 0)
-        {
-            return;
-        }
-
-        foreach (var chunk in items.Chunk(DefaultChunkSize))
-        {
-            var tasks = new List<Task>(DefaultChunkSize);
-            foreach (var item in chunk)
-            {
-                tasks.Add(EnqueueItemAsync(item));
-            }
-
-            await Task.WhenAll(tasks);
-        }
+        var response = await container.CreateTransactionalBatch(options.PartitionKeySelector(item))
+            .ReadItem(item.Id)
+            .DeleteItem(item.Id)
+            .ExecuteAsync();
+        var r0 = response.GetOperationResultAtIndex<T>(0);
+        return r0;
     }
 
-    public async Task EnqueueItemAsync(T item)
-    {
-        await container.CreateItemAsync(item, options.PartitionKeySelector(item));
-    }
-
-    public Task DeleteItemAsync(T item) =>
-        container.DeleteItemAsync<object>(item.Id, options.PartitionKeySelector(item));
-
-    public IAsyncEnumerable<T> ToAsyncEnumerable() => ToAsyncEnumerable(i => i);
+    public IAsyncEnumerable<T> ToAsyncEnumerable(CancellationToken ct = default) => ToAsyncEnumerable(i => i, ct);
     
     public IAsyncEnumerable<T> ToAsyncEnumerable(Func<IOrderedQueryable<T>, IQueryable<T>> query, CancellationToken ct = default)
     {
         using var iterator = query(container.GetItemLinqQueryable<T>())
-                .ToFeedIterator();
+            .ToFeedIterator();
         return iterator.ToAsyncEnumerable(ct);
     }
 }
