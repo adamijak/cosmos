@@ -32,7 +32,7 @@ public class CosmosQueueSaturation
 
         for (var i = 0; i < itemCount; i++)
         {
-            await queue.EnqueueAsync(new QueueItem { Id = Guid.NewGuid().ToString() });
+            await queue.CreateAsync(new QueueItem { Id = Guid.NewGuid().ToString() });
         }
         
         if (saturation == -1)

@@ -28,21 +28,21 @@ public class CosmosQueuePk
     };
     
     [TestMethod]
-    public async Task Enqueue()
+    public async Task Create()
     {
         var item = SimpleQueueItem;
-        QueueItemPk result = await queue.EnqueueAsync(item);
+        QueueItemPk result = await queue.CreateAsync(item);
         Assert.AreEqual(item.Id, result.Id);
         Assert.AreEqual(item.Pk, result.Pk);
     }
     
     [TestMethod]
-    public async Task EnqueueDequeue()
+    public async Task CreateDelete()
     {
         var item = SimpleQueueItem;
-        await queue.EnqueueAsync(item);
+        await queue.CreateAsync(item);
         
-        var result = await queue.DequeueAsync(item);
+        var result = await queue.ReadDeleteAsync(item);
         Assert.AreEqual(item.Id, result.Resource.Id);
         Assert.AreEqual(item.Pk, result.Resource.Pk);
     }

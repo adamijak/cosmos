@@ -25,10 +25,10 @@ public class CosmosQueue
     };
     
     [TestMethod]
-    public async Task Enqueue()
+    public async Task Create()
     {
         var item = SimpleQueueItem;
-        QueueItem result = await queue.EnqueueAsync(item);
+        QueueItem result = await queue.CreateAsync(item);
         
         Assert.AreEqual(item.Id, result.Id);
         Assert.AreNotEqual(default, result.Id);
@@ -38,7 +38,7 @@ public class CosmosQueue
     public async Task Read()
     {
         var item = SimpleQueueItem;
-        await queue.EnqueueAsync(item);
+        await queue.CreateAsync(item);
         
         QueueItem result = await queue.ReadAsync(item);
         Assert.AreEqual(item.Id, result.Id);
@@ -48,7 +48,7 @@ public class CosmosQueue
     public async Task Delete()
     {
         var item = SimpleQueueItem;
-        QueueItem enqueued = await queue.EnqueueAsync(item);
+        QueueItem enqueued = await queue.CreateAsync(item);
         Assert.AreEqual(item.Id, enqueued.Id);
         
         await queue.DeleteAsync(item);
@@ -60,7 +60,7 @@ public class CosmosQueue
     public async Task ReadSystemProperties()
     {
         var item = SimpleQueueItem;
-        QueueItem result = await queue.EnqueueAsync(item);
+        QueueItem result = await queue.CreateAsync(item);
         
         Assert.AreNotEqual(default, result.ResourceId);
         Assert.AreNotEqual(default, result.Self);
@@ -70,12 +70,12 @@ public class CosmosQueue
     }
     
     [TestMethod]
-    public async Task EnqueueDequeue()
+    public async Task CreateReadDelete()
     {
         var item = SimpleQueueItem;
-        await queue.EnqueueAsync(item);
+        await queue.CreateAsync(item);
         
-        var result = await queue.DequeueAsync(item);
+        var result = await queue.ReadDeleteAsync(item);
         Assert.AreEqual(item.Id, result.Resource.Id);
     }
     

@@ -13,7 +13,7 @@ public class CosmosQueue<T>(Container container, CosmosQueueOptions<T> options) 
         options.SaturationThreshold != -1
         && options.SaturationThreshold < await CountAsync();
     
-    public Task<ItemResponse<T>> EnqueueAsync(T item) =>
+    public Task<ItemResponse<T>> CreateAsync(T item) =>
         container.CreateItemAsync(item, options.PartitionKeySelector(item));
     
     public Task<ItemResponse<T>> ReadAsync(T item) =>
@@ -22,7 +22,7 @@ public class CosmosQueue<T>(Container container, CosmosQueueOptions<T> options) 
     public Task<ItemResponse<T>> DeleteAsync(T item) =>
         container.DeleteItemAsync<T>(item.Id, options.PartitionKeySelector(item));
 
-    public async Task<TransactionalBatchOperationResult<T>> DequeueAsync(T item)
+    public async Task<TransactionalBatchOperationResult<T>> ReadDeleteAsync(T item)
     {
         var response = await container.CreateTransactionalBatch(options.PartitionKeySelector(item))
             .ReadItem(item.Id)

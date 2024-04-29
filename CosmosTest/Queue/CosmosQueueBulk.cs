@@ -23,16 +23,16 @@ public class CosmosQueueBulk
     }
     
     [TestMethod]
-    public async Task BulkEnqueue()
+    public async Task BulkCreate()
     {
         var items = Enumerable.Range(0, Count)
             .Select(i => new QueueItemPk
             {
                 Id = Guid.NewGuid().ToString(),
-                Pk = nameof(BulkEnqueue),
+                Pk = nameof(BulkCreate),
             })
             .ToList();
-        await items.ForEachAsync(queue.EnqueueAsync, 100);
+        await items.ForEachAsync(queue.CreateAsync, 100);
         Assert.AreEqual(Count, await queue.CountAsync());
     }
     
@@ -47,7 +47,7 @@ public class CosmosQueueBulk
             })
             .ToList();
         
-        await items.ForEachAsync(queue.EnqueueAsync, 100);
+        await items.ForEachAsync(queue.CreateAsync, 100);
 
         var counter = 0;
         await queue.ToAsyncEnumerable(q => q.Where(i => i.Pk == nameof(BulkProcess)))
