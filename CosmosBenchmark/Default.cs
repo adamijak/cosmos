@@ -1,4 +1,4 @@
-namespace CosmosBenchmark;
+namespace Adamijak.CosmosBenchmark;
 
 public static class Default
 {

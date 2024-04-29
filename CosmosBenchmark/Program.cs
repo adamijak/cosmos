@@ -1,4 +1,4 @@
-﻿using BenchmarkDotNet.Running;
-using CosmosBenchmark;
+﻿using Adamijak.CosmosBenchmark;
+using BenchmarkDotNet.Running;
 
 BenchmarkRunner.Run<ConcurrentInsert>();

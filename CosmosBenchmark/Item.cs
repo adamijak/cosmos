@@ -1,4 +1,4 @@
-namespace CosmosBenchmark;
+namespace Adamijak.CosmosBenchmark;
 
 public class Item(int size)
 {

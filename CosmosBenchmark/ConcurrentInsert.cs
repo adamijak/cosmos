@@ -2,7 +2,7 @@ using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
 using Microsoft.Azure.Cosmos;
 
-namespace CosmosBenchmark;
+namespace Adamijak.CosmosBenchmark;
 
 [SimpleJob(RunStrategy.ColdStart, iterationCount: 5)]
 public class ConcurrentInsert
