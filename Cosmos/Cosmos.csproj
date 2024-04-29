@@ -9,9 +9,9 @@
         <Version>0.0.0</Version>
         <Title>Azure Cosmos DB utilities</Title>
         <Authors>adamijak</Authors>
-        <PackageProjectUrl>https://github.com/adamijak/cosmos/blob/main/LICENSE</PackageProjectUrl>
+        <PackageProjectUrl>https://github.com/adamijak/cosmos</PackageProjectUrl>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <RepositoryUrl>https://github.com/adamijak/cosmos/blob/main/LICENSE</RepositoryUrl>
+        <RepositoryUrl>https://github.com/adamijak/cosmos</RepositoryUrl>
         <PackageTags>Azure; CosmosDB; Microsoft; Database; Extensions</PackageTags>
     </PropertyGroup>
 
