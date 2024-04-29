@@ -2,7 +2,7 @@ namespace Adamijak.Cosmos.Extensions;
 
 public static class AsyncEnumerableExtensions
 {
-    public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> source, Func<T, Task> action, int itemsConcurrent = 1, CancellationToken ct = default)
+    public static async Task ForEachAsync<T>(this IAsyncEnumerable<T> source, Func<T, Task> func, int itemsConcurrent = 1, CancellationToken ct = default)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(itemsConcurrent, 1);
 
@@ -19,7 +19,7 @@ public static class AsyncEnumerableExtensions
                 tasks.Remove(task);
             }
             
-            tasks.Add(action(item));
+            tasks.Add(func(item));
         }
         await Task.WhenAll(tasks);
     }
