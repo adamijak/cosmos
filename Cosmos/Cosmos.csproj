@@ -6,7 +6,7 @@
         <Nullable>enable</Nullable>
         <AssemblyName>Adamijak.Cosmos</AssemblyName>
         <RootNamespace>Adamijak.Cosmos</RootNamespace>
-        <Version>0.0.2</Version>
+        <Version>0.0.3</Version>
         <Title>Azure Cosmos DB utilities</Title>
         <Authors>adamijak</Authors>
         <PackageProjectUrl>https://github.com/adamijak/cosmos</PackageProjectUrl>
