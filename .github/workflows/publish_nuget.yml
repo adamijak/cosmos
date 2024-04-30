@@ -1,0 +1,29 @@
+name: Publish NuGet
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  Test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8.0.x
+    - name: Restore dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --no-restore
+    - name: Test
+      run: dotnet test -c Release -l GitHubActions -e COSMOS_CS="${{ secrets.COSMOS_CS }}"
+    - name: Pack
+      run: dotnet pack -c Release -o ./out
+    - name: Publish
+      run: |
+        tag=${{ github.ref_name }}
+        version="${tag:1}"
+        dotnet nuget push ./out/*$version.nupkg -k $NUGET_AUTH_TOKEN -s https://api.nuget.org/v3/index.json
